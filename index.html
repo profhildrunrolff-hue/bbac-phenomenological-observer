@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Language of Seeing · BBAC</title>
+  <style>
+    :root {
+      --night-blue: #1D2D3E;
+      --dark-red: #B03A2E;
+      --soft-grey: #EBEBEB;
+      --mid-grey: #666666;
+      --white: #FFFFFF;
+      --accent-pale: #F5F0EE;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: var(--soft-grey);
+      color: var(--night-blue);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--night-blue);
+      padding: 2rem 2.5rem 1.8rem;
+    }
+
+    .header-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid-grey);
+      margin-bottom: 0.5rem;
+    }
+
+    .header-title {
+      font-size: 1.6rem;
+      font-weight: normal;
+      color: var(--white);
+      line-height: 1.3;
+    }
+
+    .header-title-zh {
+      font-size: 1.2rem;
+      color: #A8BBCC;
+      margin-top: 0.3rem;
+      font-weight: normal;
+    }
+
+    .opening {
+      background: var(--white);
+      border-left: 4px solid var(--dark-red);
+      margin: 2rem 2.5rem;
+      padding: 1.6rem 1.8rem;
+    }
+
+    .opening p {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: var(--night-blue);
+      font-style: italic;
+      margin-bottom: 0.9rem;
+    }
+
+    .opening p:last-child { margin-bottom: 0; }
+
+    .opening p.zh {
+      font-style: normal;
+      color: var(--mid-grey);
+      font-size: 0.88rem;
+      line-height: 1.8;
+    }
+
+    .reminder {
+      background: var(--accent-pale);
+      border-left: 3px solid var(--dark-red);
+      margin: 0 2.5rem 1.5rem;
+      padding: 0.9rem 1.2rem;
+    }
+
+    .reminder-en {
+      font-size: 0.82rem;
+      color: var(--night-blue);
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    .reminder-zh {
+      font-size: 0.78rem;
+      color: var(--mid-grey);
+      margin-top: 0.4rem;
+      line-height: 1.65;
+    }
+
+    .step-nav {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .step-btn {
+      background: var(--white);
+      border: 2px solid transparent;
+      color: var(--night-blue);
+      font-family: Arial, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.55rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .step-btn:hover {
+      border-color: var(--dark-red);
+      color: var(--dark-red);
+    }
+
+    .step-btn.active {
+      background: var(--dark-red);
+      color: var(--white);
+      border-color: var(--dark-red);
+    }
+
+    .step-panel {
+      display: none;
+      margin: 1.5rem 2.5rem 0;
+    }
+
+    .step-panel.visible { display: block; }
+
+    .step-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .step-number {
+      font-family: Arial, sans-serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--dark-red);
+      line-height: 1;
+      opacity: 0.25;
+    }
+
+    .step-title-block { flex: 1; }
+
+    .step-title-en {
+      font-size: 1.35rem;
+      font-weight: normal;
+      color: var(--night-blue);
+      line-height: 1.2;
+    }
+
+    .step-title-zh {
+      font-size: 1rem;
+      color: var(--mid-grey);
+      margin-top: 0.2rem;
+    }
+
+    .step-question {
+      font-family: Arial, sans-serif;
+      font-size: 0.8rem;
+      color: var(--dark-red);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .sentences {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .sentence-card {
+      background: var(--white);
+      padding: 1rem 1.2rem;
+      cursor: pointer;
+      transition: box-shadow 0.15s;
+      border-top: 3px solid transparent;
+    }
+
+    .sentence-card:hover {
+      box-shadow: 0 2px 12px rgba(29,45,62,0.1);
+      border-top-color: var(--dark-red);
+    }
+
+    .sentence-card.selected {
+      border-top-color: var(--dark-red);
+      box-shadow: 0 2px 12px rgba(176,58,46,0.15);
+    }
+
+    .sentence-en {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: var(--night-blue);
+      margin-bottom: 0.4rem;
+    }
+
+    .sentence-zh {
+      font-size: 0.82rem;
+      color: var(--mid-grey);
+      line-height: 1.6;
+    }
+
+    .lenses-section {
+      margin: 0 2.5rem 2rem;
+      border-top: 1px solid #D0D8E0;
+      padding-top: 1.5rem;
+    }
+
+    .lenses-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mid-grey);
+      margin-bottom: 0.3rem;
+    }
+
+    .lenses-label-zh {
+      font-size: 0.65rem;
+      color: #999;
+      margin-bottom: 1rem;
+      font-family: Arial, sans-serif;
+    }
+
+    .lenses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+    }
+
+    .lens-card {
+      background: var(--white);
+      padding: 1rem 1.1rem;
+      border-left: 3px solid var(--night-blue);
+    }
+
+    .lens-module {
+      font-family: Arial, sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dark-red);
+      margin-bottom: 0.4rem;
+    }
+
+    .lens-title-en {
+      font-size: 0.82rem;
+      font-weight: bold;
+      color: var(--night-blue);
+      margin-bottom: 0.25rem;
+      line-height: 1.3;
+    }
+
+    .lens-title-zh {
+      font-size: 0.75rem;
+      color: var(--mid-grey);
+      margin-bottom: 0.5rem;
+    }
+
+    .lens-desc-en {
+      font-size: 0.78rem;
+      color: var(--mid-grey);
+      line-height: 1.55;
+      margin-bottom: 0.3rem;
+    }
+
+    .lens-desc-zh {
+      font-size: 0.73rem;
+      color: #999;
+      line-height: 1.6;
+    }
+
+    .collected-section {
+      margin: 0 2.5rem 2rem;
+      background: var(--night-blue);
+      padding: 1.5rem 1.8rem;
+    }
+
+    .collected-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #A8BBCC;
+      margin-bottom: 0.3rem;
+    }
+
+    .collected-label-zh {
+      font-size: 0.65rem;
+      color: #6A8A9F;
+      margin-bottom: 0.8rem;
+      font-family: Arial, sans-serif;
+    }
+
+    #collected-text {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--white);
+      min-height: 3rem;
+      white-space: pre-wrap;
+      font-style: italic;
+    }
+
+    .collected-empty {
+      color: #4A6278;
+      font-style: normal;
+      font-size: 0.85rem;
+    }
+
+    .collected-actions {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+    }
+
+    .btn-clear {
+      font-family: Arial, sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1px solid #4A6278;
+      color: #A8BBCC;
+      padding: 0.4rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-clear:hover {
+      border-color: var(--dark-red);
+      color: var(--white);
+    }
+
+    footer {
+      background: var(--night-blue);
+      padding: 1.2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-text {
+      font-family: Arial, sans-serif;
+      font-size: 0.68rem;
+      color: #4A6278;
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 700px) {
+      header, .opening, .step-nav, .step-panel,
+      .lenses-section, .collected-section, footer, .reminder {
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
+        margin-left: 0;
+        margin-right: 0;
+      }
+      .sentences { grid-template-columns: 1fr; }
+      .lenses-grid { grid-template-columns: 1fr; }
+      .step-nav { padding: 0 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">BBAC · Coaching Tool</div>
+  <div class="header-title">The Language of Seeing</div>
+  <div class="header-title-zh">观察的语言</div>
+</header>
+
+<div class="opening">
+  <p>The descriptive stance is a practice in not overforming what is given — allowing what appears to remain in its appearance. It is also a discipline for the coach: to hold back judgement, to set aside personal feeling, and to stay with what is actually there.</p>
+  <p class="zh">描述性的姿态是一种练习，让所见之物保持其本来面貌，而不加以过度诠释。这也是教练自律的训练：暂时搁置判断与个人感受，专注于眼前真实存在的事物。</p>
+  <p>Often, after a careful phenomenological description, we find a far more precise and chosen access to the artwork — and to the person who lives within it.</p>
+  <p class="zh">往往在细致的现象学描述之后，我们才能更精准、更有选择性地进入作品——以及居于其中的人。</p>
+</div>
+
+<div class="reminder">
+  <div class="reminder-en">Describe only what is visible. No interpretation yet. One sentence — one observation.</div>
+  <div class="reminder-zh">只描述可见之物。暂不诠释。一句话——一个观察。</div>
+</div>
+
+<div class="step-nav">
+  <button class="step-btn active" onclick="showStep(1, this)">1 · Where? 在哪里？</button>
+  <button class="step-btn" onclick="showStep(2, this)">2 · What? 是什么？</button>
+  <button class="step-btn" onclick="showStep(3, this)">3 · How? 怎么样？</button>
+  <button class="step-btn" onclick="showStep(4, this)">4 · Relation 关系</button>
+  <button class="step-btn" onclick="showStep(5, this)">5 · Organisation 组织</button>
+</div>
+
+<!-- STEP 1 -->
+<div class="step-panel visible" id="step-1">
+  <div class="step-header">
+    <div class="step-number">1</div>
+    <div class="step-title-block">
+      <div class="step-title-en">Where is it?</div>
+      <div class="step-title-zh">它在哪里？</div>
+    </div>
+  </div>
+  <div class="step-question">Locate before you name · 先定位，再命名</div>
+  <div class="sentences">
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">In the upper left corner...</div>
+      <div class="sentence-zh">在左上角……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">Towards the centre...</div>
+      <div class="sentence-zh">朝向中心……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">Along the lower edge...</div>
+      <div class="sentence-zh">沿着下边缘……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">Slightly to the right of centre...</div>
+      <div class="sentence-zh">略偏中心右侧……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">Across the whole surface...</div>
+      <div class="sentence-zh">遍布整个画面……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">In the lower right corner...</div>
+      <div class="sentence-zh">在右下角……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">Along the upper edge...</div>
+      <div class="sentence-zh">沿着上边缘……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">In the left half of the picture...</div>
+      <div class="sentence-zh">在画面左半部分……</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step-panel" id="step-2">
+  <div class="step-header">
+    <div class="step-number">2</div>
+    <div class="step-title-block">
+      <div class="step-title-en">What is there?</div>
+      <div class="step-title-zh">那里有什么？</div>
+    </div>
+  </div>
+  <div class="step-question">Name without evaluating · 命名，不评价</div>
+  <div class="sentences">
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">...there is a shape...</div>
+      <div class="sentence-zh">……有一个形状……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">...there are several lines...</div>
+      <div class="sentence-zh">……有几条线……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">...there is a large area of colour...</div>
+      <div class="sentence-zh">……有一大片颜色……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">...there is a boundary...</div>
+      <div class="sentence-zh">……有一条边界……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">...there is an open area...</div>
+      <div class="sentence-zh">……有一片开放区域……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">...there is a dense cluster of marks...</div>
+      <div class="sentence-zh">……有一处密集的笔迹……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">...there is a single point...</div>
+      <div class="sentence-zh">……有一个单独的点……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">...there is a repeated mark...</div>
+      <div class="sentence-zh">……有一个重复出现的标记……</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step-panel" id="step-3">
+  <div class="step-header">
+    <div class="step-number">3</div>
+    <div class="step-title-block">
+      <div class="step-title-en">What does it look like?</div>
+      <div class="step-title-zh">它看起来怎么样？</div>
+    </div>
+  </div>
+  <div class="step-question">Colour · Line · Texture · Quality · 颜色·线条·质感·性质</div>
+  <div class="sentences">
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">It is dark...</div>
+      <div class="sentence-zh">它是深色的……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The colour lightens towards the edge...</div>
+      <div class="sentence-zh">颜色朝边缘渐渐变浅……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The lines are fine and closely spaced...</div>
+      <div class="sentence-zh">线条细密，间距紧凑……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The shape is wide at the top and narrows downward...</div>
+      <div class="sentence-zh">形状上宽下窄……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The shape is wide at the base and narrows upward...</div>
+      <div class="sentence-zh">形状下宽上窄……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The texture appears rough and uneven...</div>
+      <div class="sentence-zh">质感看起来粗糙而不均匀……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The marks are continuous and unbroken...</div>
+      <div class="sentence-zh">笔迹连续而不间断……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The edges are soft and gradual...</div>
+      <div class="sentence-zh">边缘柔和而渐变……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The edges are sharp and defined...</div>
+      <div class="sentence-zh">边缘清晰而分明……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The colour is dense at the centre...</div>
+      <div class="sentence-zh">颜色在中心处最为浓密……</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step-panel" id="step-4">
+  <div class="step-header">
+    <div class="step-number">4</div>
+    <div class="step-title-block">
+      <div class="step-title-en">How is it related?</div>
+      <div class="step-title-zh">它与其他元素的关系如何？</div>
+    </div>
+  </div>
+  <div class="step-question">Touching · Separate · Surrounding · Overlapping · 触碰·分离·环绕·重叠</div>
+  <div class="sentences">
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">It is surrounded by...</div>
+      <div class="sentence-zh">它被……所环绕</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">Nothing touches it...</div>
+      <div class="sentence-zh">没有任何事物与它接触……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">It overlaps with the area to its left...</div>
+      <div class="sentence-zh">它与左侧区域重叠……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">A gap separates it from the rest...</div>
+      <div class="sentence-zh">一道间隙将它与其余部分分开……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">It runs alongside another shape...</div>
+      <div class="sentence-zh">它与另一个形状并排延伸……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">It is enclosed within a larger area...</div>
+      <div class="sentence-zh">它被包含在一个更大的区域之内……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">It touches the edge of the picture...</div>
+      <div class="sentence-zh">它触及画面的边缘……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">Between it and the nearest shape there is a distance of...</div>
+      <div class="sentence-zh">它与最近的形状之间有一段距离……</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step-panel" id="step-5">
+  <div class="step-header">
+    <div class="step-number">5</div>
+    <div class="step-title-block">
+      <div class="step-title-en">How is it organised?</div>
+      <div class="step-title-zh">整体是如何组织的？</div>
+    </div>
+  </div>
+  <div class="step-question">Direction · Centre · Rhythm · Pattern · 方向·中心·节奏·规律</div>
+  <div class="sentences">
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">Together they form a radial arrangement...</div>
+      <div class="sentence-zh">它们共同构成一种放射状排列……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">Together they form a repeated pattern...</div>
+      <div class="sentence-zh">它们共同构成一种重复的规律……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The overall direction is from left to right...</div>
+      <div class="sentence-zh">整体方向是从左到右……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The overall direction is from bottom to top...</div>
+      <div class="sentence-zh">整体方向是从下到上……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">There is a clear centre point...</div>
+      <div class="sentence-zh">有一个清晰的中心点……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">An open area appears in the middle...</div>
+      <div class="sentence-zh">中间出现了一片开放的区域……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The elements are distributed across the surface...</div>
+      <div class="sentence-zh">元素分布于整个画面……</div>
+    </div>
+    <div class="sentence-card" onclick="addSentence(this)">
+      <div class="sentence-en">The density increases towards one side...</div>
+      <div class="sentence-zh">密度朝一侧逐渐增加……</div>
+    </div>
+  </div>
+</div>
+
+<!-- COLLECTED DESCRIPTION -->
+<div class="collected-section">
+  <div class="collected-label">Your Description So Far</div>
+  <div class="collected-label-zh">目前的描述</div>
+  <div id="collected-text"><span class="collected-empty">Select sentences above to build your description. Each tap adds a sentence. · 点击上方句子以构建您的描述。每次点击添加一句。</span></div>
+  <div class="collected-actions">
+    <button class="btn-clear" onclick="clearCollected()">Clear · 清除</button>
+  </div>
+</div>
+
+<!-- OBSERVATION LENSES -->
+<div class="lenses-section">
+  <div class="lenses-label">Background Observation Lenses — carry these simultaneously</div>
+  <div class="lenses-label-zh">背景观察视角——同时保持这三个维度</div>
+  <div class="lenses-grid">
+
+    <div class="lens-card">
+      <div class="lens-module">Module 1 · 模块一</div>
+      <div class="lens-title-en">Safety Anchors in Motion</div>
+      <div class="lens-title-zh">安全锚点的运动</div>
+      <div class="lens-desc-en">What movement quality is visible in the marks? Circling, ordering, expanding, staying contained, condensing? Fluid, weighted, springing, forceful, floating?</div>
+      <div class="lens-desc-zh">笔迹中可见怎样的运动特质？盘旋、整理、扩展、保持收敛、凝缩？流动、沉重、跳跃、有力、飘浮？</div>
+    </div>
+
+    <div class="lens-card">
+      <div class="lens-module">Module 2 · 模块二</div>
+      <div class="lens-title-en">Space-Time Schema</div>
+      <div class="lens-title-zh">时空图式</div>
+      <div class="lens-desc-en">How is the available space used? Which areas are occupied, which are left open? Where does the activity concentrate — at the edges, at the centre, in one region?</div>
+      <div class="lens-desc-zh">如何使用可用空间？哪些区域被占据，哪些被留空？活动集中在哪里——边缘、中心，还是某一区域？</div>
+    </div>
+
+    <div class="lens-card">
+      <div class="lens-module">Module 4 · 模块四</div>
+      <div class="lens-title-en">Seeking in the Process</div>
+      <div class="lens-title-zh">过程中的探索</div>
+      <div class="lens-desc-en">Where in the picture is energy visible? What has been built, extended, covered, or left open? What does the sequence of marks suggest about the movement of attention?</div>
+      <div class="lens-desc-zh">画面中哪里可见能量？什么被建构、延伸、覆盖或留白？笔迹的顺序暗示了注意力怎样的流动？</div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-text">Biography-Based Art Coaching · earth-s Institut · Prof. Hildrun Rolff</div>
+  <div class="footer-text">bbac-phenomenological-observer</div>
+</footer>
+
+<script>
+  let collectedSentences = [];
+
+  function showStep(n, btn) {
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('visible'));
+    document.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('step-' + n).classList.add('visible');
+    btn.classList.add('active');
+  }
+
+  function addSentence(card) {
+    const en = card.querySelector('.sentence-en').textContent.trim();
+    const zh = card.querySelector('.sentence-zh').textContent.trim();
+    collectedSentences.push({ en, zh });
+    card.classList.add('selected');
+    setTimeout(() => card.classList.remove('selected'), 600);
+    renderCollected();
+  }
+
+  function renderCollected() {
+    const el = document.getElementById('collected-text');
+    if (collectedSentences.length === 0) {
+      el.innerHTML = '<span class="collected-empty">Select sentences above to build your description. Each tap adds a sentence. · 点击上方句子以构建您的描述。每次点击添加一句。</span>';
+      return;
+    }
+    const lines = collectedSentences.map(s => s.en + '\n' + s.zh).join('\n\n');
+    el.textContent = lines;
+  }
+
+  function clearCollected() {
+    collectedSentences = [];
+    renderCollected();
+  }
+</script>
+</body>
+</html>
